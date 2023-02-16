@@ -1,0 +1,247 @@
+{% extends 'main/header.html' %}
+
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Identity Card Creator</title>
+	<style>
+		.container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-top: 50px;
+		}
+		h1 {
+			font-size: 36px;
+			margin-bottom: 30px;
+		}
+		form {
+			display: flex;
+			flex-direction: column;
+			/* align-items: center; */
+		}
+		/* label {
+			margin-top: 20px;
+			font-size: 18px;
+		}
+		input[type=text] {
+			width: 400px;
+			padding: 10px;
+			margin-top: 10px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			box-sizing: border-box;
+			font-size: 16px;
+		}
+        input[type=select] {
+			width: 400px;
+			padding: 10px;
+			margin-top: 10px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			box-sizing: border-box;
+			font-size: 16px;
+		}
+		input[type=file] {
+			margin-top: 10px;
+		} */
+		button[type=submit] {
+			background-color: #4CAF50;
+			color: white;
+			padding: 12px 20px;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 18px;
+			margin-top: 20px;
+		}
+		.preview {
+			margin-top: 30px;
+			border: 1px solid #ccc;
+			padding: 10px;
+			width: 400px;
+			height: 680px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+            /* background-image: ; */
+		}
+        .thecard{
+            position: relative;
+            width: 300px;
+			height: 510px;
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+        }
+
+        .thecard:hover{
+            transform: rotateY(180deg);
+        }
+
+        .thefront{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background-image: #ffc728;
+            color: #333;
+        }
+
+        .theback{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background-image: #fafafa;
+            color: #333;
+            transform: rotateY(180deg);
+        }
+
+		.preview img {
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+</head>
+<body>
+	
+		<h1>Identity Card Creator</h1>
+        <div class="row">
+            <div class="col s12 m6">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{form.as_p}}
+                    <!-- <label for="first-name">First Name:</label>
+                    <input type="text" id="first-name" name="first-name" required>
+        
+                    <label for="last-name">Last Name:</label>
+                    <input type="text" id="last-name" name="last-name" required>
+        
+                    <label for="department">Department:</label>
+                    <input type="text" id="department" name="department" required>
+        
+                    <label for="user-number">User Number:</label>
+                    <input type="text" id="user-number" name="user-number" required>
+        
+                    <label for="photo">Photo:</label>
+                    <input type="file" id="photo" name="photo" accept="image/*" required> -->
+        
+                    <button type="submit">Create Identity Card</button>
+                </form>
+            </div>
+            <div class="col s12 m6">
+                <div class="preview">
+                    {% if msg %}
+                    <!-- <div class="row"> -->
+                    <!-- <a href="#"> -->
+                        <div class="thecard">
+                            <div class="thefront">
+                                <img src="media/{{img1}}" alt="front">
+                            </div>
+                            <div class="theback">
+                                <img src="media/{{img2}}" alt="back">
+                            </div>
+                        </div>
+                    <!-- </a> -->
+                    <!-- </div> -->
+                    <div class="row">
+                        <a href="{% url 'main:download' img1 img2 %}" class="btn">Download</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+		
+	
+    <!-- <script>
+        // Get form and input elements
+        const form = document.querySelector('form');
+        const firstNameInput = document.querySelector('#id_first_name');
+        const lastNameInput = document.querySelector('#id_last_name');
+        const departmentInput = document.querySelector('#id_department');
+        const userNumberInput = document.querySelector('#id_user_number');
+        const photoInput = document.querySelector('#id_photo');
+        const previewImg = document.querySelector('.preview img');
+        const previewText = document.querySelector('.preview p');
+    
+        // Listen for form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+    
+            // Validate input fields
+            const isValid = validateInputs();
+    
+            // If input fields are valid, update preview
+            if (isValid) {
+                previewText.innerHTML = `${firstNameInput.value} ${lastNameInput.value}<br>${departmentInput.value}<br>${userNumberInput.value}`;
+                if (photoInput.files && photoInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                    }
+                    reader.readAsDataURL(photoInput.files[0]);
+                }
+                else {
+                    previewImg.src = '#';
+                }
+            }
+        });
+    
+        // Function to validate input fields
+        function validateInputs() {
+            let isValid = true;
+    
+            if (firstNameInput.value.trim() === '') {
+                firstNameInput.style.borderColor = 'red';
+                isValid = false;
+            }
+            else {
+                firstNameInput.style.borderColor = '';
+            }
+    
+            if (lastNameInput.value.trim() === '') {
+                lastNameInput.style.borderColor = 'red';
+                isValid = false;
+            }
+            else {
+                lastNameInput.style.borderColor = '';
+            }
+    
+            if (departmentInput.value.trim() === '') {
+                departmentInput.style.borderColor = 'red';
+                isValid = false;
+            }
+            else {
+                departmentInput.style.borderColor = '';
+            }
+    
+            if (userNumberInput.value.trim() === '') {
+                userNumberInput.style.borderColor = 'red';
+                isValid = false;
+            }
+            else {
+                userNumberInput.style.borderColor = '';
+            }
+    
+            if (!photoInput.files || !photoInput.files[0]) {
+                photoInput.style.borderColor = 'red';
+                isValid = false;
+            }
+            else {
+                photoInput.style.borderColor = '';
+            }
+    
+            return isValid;
+        }
+    </script>     -->
+    </body>
+    </html>
+
+
+	
+
+{% endblock %}
